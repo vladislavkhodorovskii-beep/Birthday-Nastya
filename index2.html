@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎁 Подарунок для тебе</title>
+    <style>
+        /* ===== Глобальні ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at center, #1a0a2e 0%, #2d1b4e 40%, #1a0a2e 100%);
+            font-family: 'Georgia', 'Times New Roman', serif;
+            overflow: hidden;
+            user-select: none;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* ===== Частинки (зірки) ===== */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 215, 215, 0.6);
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+            box-shadow: 0 0 6px rgba(255, 200, 200, 0.4);
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* ===== Головний контейнер ===== */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+            min-height: 70vh;
+        }
+
+        /* Центрувальний блок */
+        .content-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 60vh;
+            position: relative;
+        }
+
+        /* ===== Подарункова коробка ===== */
+        .gift-wrapper {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            cursor: pointer;
+            perspective: 900px;
+            transition: opacity 0.8s ease, transform 0.8s ease, scale 0.8s ease;
+            opacity: 1;
+            scale: 1;
+            flex-shrink: 0;
+        }
+
+        .gift-wrapper.hidden {
+            opacity: 0;
+            scale: 0.3;
+            pointer-events: none;
+            cursor: default;
+        }
+
+        .gift-wrapper:hover:not(.hidden) {
+            transform: scale(1.04);
+        }
+
+        .gift-wrapper:active:not(.hidden) {
+            transform: scale(0.96);
+        }
+
+        .gift-box {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Тіло коробки */
+        .box-body {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(160deg, #c0392b, #a93226 40%, #7b241c);
+            border-radius: 0 0 18px 18px;
+            box-shadow:
+                inset 0 -8px 0 rgba(0, 0, 0, 0.3),
+                inset 0 8px 20px rgba(255, 200, 150, 0.2),
+                0 20px 60px rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(180, 60, 40, 0.5);
+            border-top: none;
+        }
+
+        .box-body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            width: 30%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        /* Кришка */
+        .box-lid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 34%;
+            background: linear-gradient(160deg, #e74c3c, #c0392b 50%, #a93226);
+            border-radius: 18px 18px 4px 4px;
+            box-shadow:
+                inset 0 -4px 0 rgba(0, 0, 0, 0.2),
+                inset 0 4px 20px rgba(255, 200, 150, 0.15),
+                0 8px 30px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(200, 80, 60, 0.5);
+            border-bottom: none;
+            transform-origin: bottom center;
+            transition: transform 0.7s cubic-bezier(0.34, 1.2, 0.64, 1);
+            z-index: 3;
+        }
+
+        .box-lid::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            width: 25%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        /* Стрічка горизонтальна */
+        .ribbon-h {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14%;
+            height: 100%;
+            background: linear-gradient(90deg, #f1c40f, #f39c12 40%, #d4a017 60%, #f1c40f);
+            z-index: 4;
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
+            border-radius: 2px;
+        }
+
+        .ribbon-h::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            pointer-events: none;
+        }
+
+        /* Стрічка вертикальна (на кришці) */
+        .ribbon-v {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 34%;
+            background: linear-gradient(180deg, #f1c40f, #f39c12 40%, #d4a017 60%, #f1c40f);
+            z-index: 5;
+            border-radius: 18px 18px 0 0;
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.25);
+        }
+
+        .ribbon-v::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), transparent 50%, rgba(0, 0, 0, 0.1));
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        /* Бантик */
+        .bow {
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: 70px;
+            height: 50px;
+            transition: transform 0.5s ease;
+        }
+
+        .bow-loop {
+            position: absolute;
+            width: 34px;
+            height: 38px;
+            background: radial-gradient(ellipse at 40% 40%, #f7dc6f, #f1c40f 50%, #d4a017);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.5);
+            transition: transform 0.5s ease;
+        }
+
+        .bow-loop::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 20%;
+            width: 35%;
+            height: 35%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.3), transparent);
+            border-radius: 50%;
+        }
+
+        .bow-loop.left {
+            left: 0;
+            transform: rotate(-20deg);
+            transform-origin: bottom right;
+        }
+
+        .bow-loop.right {
+            right: 0;
+            transform: rotate(20deg);
+            transform-origin: bottom left;
+        }
+
+        .bow-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle at 40% 35%, #f7dc6f, #e67e22);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.6);
+            z-index: 2;
+        }
+
+        .bow-center::after {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 25%;
+            width: 30%;
+            height: 30%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent);
+            border-radius: 50%;
+        }
+
+        .bow-tail {
+            position: absolute;
+            bottom: -8px;
+            width: 18px;
+            height: 22px;
+            background: linear-gradient(180deg, #f1c40f, #d4a017);
+            border-radius: 0 0 50% 50% / 0 0 100% 100%;
+            transform-origin: top center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .bow-tail.left {
+            left: 10px;
+            transform: rotate(-15deg);
+        }
+
+        .bow-tail.right {
+            right: 10px;
+            transform: rotate(15deg);
+        }
+
+        /* ===== СТАН ВІДКРИТО ===== */
+        .gift-wrapper.open .box-lid {
+            transform: rotateX(-110deg) translateY(-10px);
+        }
+
+        .gift-wrapper.open .bow-loop.left {
+            transform: rotate(-40deg) translateY(-10px);
+        }
+
+        .gift-wrapper.open .bow-loop.right {
+            transform: rotate(40deg) translateY(-10px);
+        }
+
+        .gift-wrapper.open .bow-tail.left {
+            transform: rotate(-30deg) translateY(-6px);
+        }
+
+        .gift-wrapper.open .bow-tail.right {
+            transform: rotate(30deg) translateY(-6px);
+        }
+
+        .gift-wrapper.open .bow-center {
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+
+        /* ===== Сяйво навколо коробки ===== */
+        .glow-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 120%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 200, 100, 0.15), transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            z-index: 0;
+        }
+
+        .gift-wrapper.open .glow-ring {
+            opacity: 1;
+            animation: pulseGlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0.4;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.9;
+            }
+        }
+
+        /* ===== ПІДКАЗКА "НАЖМИ" ===== */
+        .hint-text {
+            margin-top: 28px;
+            color: rgba(255, 220, 220, 0.8);
+            font-size: 20px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(255, 100, 100, 0.3);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            font-style: italic;
+            animation: hintPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes hintPulse {
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        .hint-text.hidden {
+            opacity: 0 !important;
+            transform: translateY(20px) !important;
+            pointer-events: none !important;
+            animation: none !important;
+        }
+
+        /* ===== СЕРЦЕ (з'являється після зникнення подарунка) ===== */
+        .heart-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.9s ease 0.9s, transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.9s;
+            pointer-events: none;
+            margin: 0;
+            padding: 0;
+            line-height: 0;
+        }
+
+        .heart-container.visible {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .heart {
+            height: 90px;
+            width: 90px;
+            background: #f20044;
+            position: relative;
+            transform: rotate(-45deg);
+            box-shadow: -10px 10px 90px #f20044, 0 0 80px rgba(242, 0, 68, 0.5);
+            animation: heartBeat 0.8s ease-in-out infinite;
+            display: block;
+        }
+
+        @keyframes heartBeat {
+            0% {
+                transform: rotate(-45deg) scale(1);
+            }
+            30% {
+                transform: rotate(-45deg) scale(1.25);
+            }
+            50% {
+                transform: rotate(-45deg) scale(1);
+            }
+            70% {
+                transform: rotate(-45deg) scale(1.15);
+            }
+            100% {
+                transform: rotate(-45deg) scale(1);
+            }
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            height: 90px;
+            width: 90px;
+            background: #f20044;
+            border-radius: 50%;
+            box-shadow: inherit;
+        }
+
+        .heart::before {
+            top: -50%;
+            left: 0;
+        }
+
+        .heart::after {
+            top: 0;
+            right: -50%;
+        }
+
+        /* ===== ТЕКСТ ПОВІДОМЛЕННЯ ===== */
+        .message-container {
+            margin-top: 40px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s ease 1.2s, transform 1s ease 1.2s;
+            max-width: 90%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .message-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message-container h1 {
+            color: #ffe6e6;
+            font-size: clamp(32px, 7vw, 52px);
+            font-weight: 700;
+            text-shadow:
+                0 0 40px rgba(242, 0, 68, 0.3),
+                0 0 80px rgba(242, 0, 68, 0.15),
+                0 4px 20px rgba(0, 0, 0, 0.5);
+            letter-spacing: 1px;
+            line-height: 1.3;
+        }
+
+        .message-container .sub-message {
+            color: rgba(255, 200, 200, 0.85);
+            font-size: clamp(18px, 3vw, 26px);
+            margin-top: 14px;
+            font-style: italic;
+            text-shadow: 0 0 30px rgba(255, 100, 100, 0.2);
+            letter-spacing: 0.5px;
+        }
+
+        .message-container .emoji-line {
+            font-size: clamp(34px, 6vw, 56px);
+            margin-top: 12px;
+            display: block;
+            animation: floatEmoji 2.5s ease-in-out infinite;
+        }
+
+        @keyframes floatEmoji {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        /* ===== Іскри при відкритті ===== */
+        .sparkle-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 7;
+            overflow: visible;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #fff7a0, #f1c40f);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            opacity: 0;
+            transition: none;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 500px) {
+            .gift-wrapper {
+                width: 170px;
+                height: 170px;
+            }
+
+            .heart {
+                height: 70px;
+                width: 70px;
+            }
+
+            .heart::before,
+            .heart::after {
+                height: 70px;
+                width: 70px;
+            }
+
+            .bow {
+                width: 50px;
+                height: 36px;
+            }
+
+            .bow-loop {
+                width: 24px;
+                height: 28px;
+            }
+
+            .bow-center {
+                width: 14px;
+                height: 14px;
+            }
+
+            .bow-tail {
+                width: 14px;
+                height: 18px;
+            }
+
+            .ribbon-h {
+                width: 12%;
+            }
+
+            .hint-text {
+                font-size: 16px;
+                margin-top: 20px;
+            }
+
+            .message-container {
+                margin-top: 30px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .gift-wrapper {
+                width: 140px;
+                height: 140px;
+            }
+
+            .heart {
+                height: 56px;
+                width: 56px;
+            }
+
+            .heart::before,
+            .heart::after {
+                height: 56px;
+                width: 56px;
+            }
+
+            .bow {
+                width: 40px;
+                height: 30px;
+            }
+
+            .bow-loop {
+                width: 20px;
+                height: 22px;
+            }
+
+            .bow-center {
+                width: 12px;
+                height: 12px;
+            }
+
+            .bow-tail {
+                width: 10px;
+                height: 14px;
+            }
+        }
+
+        /* ===== Запобігаємо виділенню ===== */
+        .no-select {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== Частинки фону ===== -->
+    <div class="particles" id="particles"></div>
+
+    <!-- ===== Головний контейнер ===== -->
+    <div class="main-container">
+
+        <div class="content-center">
+
+            <!-- Подарунок -->
+            <div class="gift-wrapper no-select" id="giftWrapper">
+                <!-- Сяйво -->
+                <div class="glow-ring"></div>
+
+                <!-- Коробка -->
+                <div class="gift-box">
+                    <!-- Кришка -->
+                    <div class="box-lid"></div>
+                    <!-- Стрічка вертикальна -->
+                    <div class="ribbon-v"></div>
+                    <!-- Тіло -->
+                    <div class="box-body"></div>
+                    <!-- Стрічка горизонтальна -->
+                    <div class="ribbon-h"></div>
+
+                    <!-- Бантик -->
+                    <div class="bow">
+                        <div class="bow-loop left"></div>
+                        <div class="bow-loop right"></div>
+                        <div class="bow-center"></div>
+                        <div class="bow-tail left"></div>
+                        <div class="bow-tail right"></div>
+                    </div>
+
+                    <!-- Іскри -->
+                    <div class="sparkle-container" id="sparkleContainer"></div>
+                </div>
+            </div>
+
+            <!-- Підказка -->
+            <div class="hint-text" id="hintText">🎁 натисни на подарунок</div>
+
+            <!-- СЕРЦЕ (з'являється після зникнення подарунка) -->
+            <div class="heart-container" id="heartContainer">
+                <div class="heart"></div>
+            </div>
+
+            <!-- Повідомлення -->
+            <div class="message-container" id="messageContainer">
+                <h1>💖 З любов'ю, ти the best 💖</h1>
+                <div class="sub-message">Твоя посмішка — найяскравіша у цілій галактиці✨ Тому посміхайся частіше😊 </div>
+                <span class="emoji-line">🌹💫🌙</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const wrapper = document.getElementById('giftWrapper');
+            const hint = document.getElementById('hintText');
+            const heartContainer = document.getElementById('heartContainer');
+            const messageContainer = document.getElementById('messageContainer');
+            const sparkleContainer = document.getElementById('sparkleContainer');
+
+            let isOpen = false;
+
+            // ===== Створення іскор =====
+            function createSparkles(count = 30) {
+                const container = sparkleContainer;
+                container.innerHTML = '';
+                for (let i = 0; i < count; i++) {
+                    const spark = document.createElement('div');
+                    spark.className = 'sparkle';
+                    const angle = Math.random() * 2 * Math.PI;
+                    const distance = 60 + Math.random() * 130;
+                    spark.style.left = '50%';
+                    spark.style.top = '50%';
+                    spark.style.width = (4 + Math.random() * 6) + 'px';
+                    spark.style.height = spark.style.width;
+                    spark.style.background = `radial-gradient(circle, 
+                        ${['#fff7a0','#f1c40f','#ff6b6b','#ff9ff3','#ffd93d'][Math.floor(Math.random()*5)]}, 
+                        ${['#f1c40f','#e67e22','#ff4757','#ff6b81','#f9ca24'][Math.floor(Math.random()*5)]})`;
+                    spark.style.boxShadow = `0 0 ${10+Math.random()*20}px rgba(255,215,0,${0.4+Math.random()*0.6})`;
+                    spark.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                    spark.dataset.angle = angle;
+                    spark.dataset.distance = distance;
+                    spark.dataset.delay = Math.random() * 0.7;
+                    spark.dataset.duration = 0.8 + Math.random() * 1.1;
+                    spark.dataset.size = parseFloat(spark.style.width);
+                    container.appendChild(spark);
+                }
+            }
+
+            // ===== Анімація іскор =====
+            function burstSparkles() {
+                const sparks = sparkleContainer.querySelectorAll('.sparkle');
+                sparks.forEach((spark) => {
+                    const angle = parseFloat(spark.dataset.angle);
+                    const distance = parseFloat(spark.dataset.distance);
+                    const delay = parseFloat(spark.dataset.delay);
+                    const duration = parseFloat(spark.dataset.duration);
+                    const size = spark.dataset.size;
+
+                    const endX = Math.cos(angle) * distance;
+                    const endY = Math.sin(angle) * distance;
+
+                    spark.style.transition = 'none';
+                    spark.style.opacity = '0';
+                    spark.style.transform = `translate(0, 0) scale(0)`;
+                    spark.style.width = size + 'px';
+                    spark.style.height = size + 'px';
+
+                    requestAnimationFrame(() => {
+                        spark.style.transition =
+                            `transform ${duration}s cubic-bezier(0.2, 0.8, 0.3, 1) ${delay}s, opacity ${duration*0.6}s ease ${delay}s, width ${duration*0.4}s ease ${delay}s, height ${duration*0.4}s ease ${delay}s`;
+                        spark.style.opacity = '1';
+                        spark.style.transform = `translate(${endX}px, ${endY}px) scale(1)`;
+                        spark.style.width = (size * 0.1) + 'px';
+                        spark.style.height = (size * 0.1) + 'px';
+                    });
+
+                    setTimeout(() => {
+                        spark.style.transition = 'opacity 0.4s ease';
+                        spark.style.opacity = '0';
+                    }, (delay + duration) * 1000 + 200);
+                });
+            }
+
+            // ===== Відкриття =====
+            function openGift() {
+                if (isOpen) return;
+                isOpen = true;
+
+                // 1. Відкриваємо коробку (анімація)
+                wrapper.classList.add('open');
+
+                // 2. Ховаємо підказку
+                hint.classList.add('hidden');
+
+                // 3. Іскри
+                setTimeout(() => {
+                    burstSparkles();
+                }, 300);
+
+                // 4. Через 1.2с — подарунок зникає (плавно)
+                setTimeout(() => {
+                    wrapper.classList.add('hidden');
+                }, 800);
+
+                // 5. Ще через 0.3с (після зникнення) — показуємо серце
+                setTimeout(() => {
+                    heartContainer.classList.add('visible');
+                }, 1200);
+
+                // 6. Повідомлення з'являється ще трохи згодом
+                setTimeout(() => {
+                    messageContainer.classList.add('visible');
+                }, 1500);
+
+                // 7. Додаткові іскри в процесі
+                setTimeout(() => {
+                    createSparkles(20);
+                    burstSparkles();
+                }, 1700);
+
+                setTimeout(() => {
+                    createSparkles(15);
+                    burstSparkles();
+                }, 2800);
+            }
+
+            // ===== Клік =====
+            wrapper.addEventListener('click', openGift);
+
+            // ===== Доступність =====
+            wrapper.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openGift();
+                }
+            });
+            wrapper.setAttribute('tabindex', '0');
+            wrapper.setAttribute('role', 'button');
+            wrapper.setAttribute('aria-label', 'Натисни, щоб відкрити подарунок');
+
+            // ===== Ініціалізація =====
+            createSparkles(25);
+
+            // ===== Частинки фону =====
+            function initParticles() {
+                const container = document.getElementById('particles');
+                const count = 45;
+                for (let i = 0; i < count; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'particle';
+                    p.style.left = Math.random() * 100 + '%';
+                    p.style.width = (2 + Math.random() * 4) + 'px';
+                    p.style.height = p.style.width;
+                    p.style.animationDuration = (12 + Math.random() * 20) + 's';
+                    p.style.animationDelay = (Math.random() * 20) + 's';
+                    p.style.opacity = 0.2 + Math.random() * 0.5;
+                    container.appendChild(p);
+                }
+            }
+            initParticles();
+
+            // ===== Оновлення іскор при ресайзі =====
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    if (!isOpen) {
+                        createSparkles(25);
+                    }
+                }, 400);
+            });
+
+            console.log('🎁 Ось і твій заслужений подарунок! Натисни на нього ❤️');
+        })();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для Настікс! ✨</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0d0614 0%, #3a1c5d 50%, #721c47 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .content {
+            width: 100%;
+            max-width: 550px;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        h1 { font-size: 1.8rem; line-height: 1.5; margin-bottom: 25px; }
+        .highlight-name {
+            background: linear-gradient(45deg, #ff4d6d, #ffb3c1, #00b4d8, #ff4d6d);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            animation: gradientText 4s ease infinite;
+        }
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .custom-player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 77, 109, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 20px rgba(255, 77, 109, 0.15);
+        }
+        .disc {
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle, #111 30%, #333 40%, #111 50%, #222 60%, #ff4d6d 70%, #111 73%);
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 0 15px rgba(255, 77, 109, 0.5);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .disc::after {
+            content: '';
+            width: 15px;
+            height: 15px;
+            background: #0d0614;
+            border-radius: 50%;
+        }
+        .rotate {
+            animation: spin 4s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .track-info {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #ff4d6d;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+        .btn-box { display: flex; flex-direction: column; gap: 15px; margin: 0 auto; max-width: 300px; width: 100%; }
+        .grid-box { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
+        .btn {
+            padding: 16px 25px; font-size: 1rem; font-weight: bold; border: none;
+            border-radius: 50px; cursor: pointer; transition: all 0.3s ease;
+            text-transform: uppercase; letter-spacing: 1px; width: 100%;
+        }
+        .btn-play {
+            background: #ff4d6d;
+            color: white;
+            font-size: 0.9rem;
+            padding: 12px 25px;
+            max-width: 200px;
+        }
+        .btn-play:hover { background: #ff758f; box-shadow: 0 0 15px #ff4d6d; }
+        .btn-quiz { background: #2a2a2a; color: #666; cursor: not-allowed; opacity: 0.5; }
+        .btn-quiz.active { 
+            background: linear-gradient(45deg, #00b4d8, #38b000); 
+            color: white; 
+            cursor: pointer;
+            opacity: 1;
+        }
+        .btn-quiz.active:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 180, 216, 0.4); }
+        .btn-option {
+            background: rgba(255, 255, 255, 0.08); color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px;
+            text-transform: none; padding: 18px 15px;
+        }
+        .btn-option:hover { background: rgba(255, 255, 255, 0.2); border-color: #00b4d8; }
+        .hidden { display: none !important; }
+        .progress { font-size: 0.9rem; color: #aaa; letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase; }
+        
+        /* Стилі для зображення питання */
+        .question-image {
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+        }
+        .question-image img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 77, 109, 0.2);
+            transition: all 0.3s ease;
+        }
+        .question-image img:hover {
+            transform: scale(1.02);
+            border-color: #ff4d6d;
+        }
+
+        /* Стиль для посилання-подарунка */
+        .gift-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 16px 40px;
+            background: linear-gradient(45deg, #ff4d6d, #ffb3c1);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            box-shadow: 0 0 30px rgba(255, 77, 109, 0.4);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        .gift-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(255, 77, 109, 0.7);
+        }
+        .gift-link::before {
+            content: "🎁 ";
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content">
+        <div id="quizProgress" class="progress hidden">Питання 1 з 3</div>
+        
+        <h1 id="mainTitle">
+            Привіт, <span class="highlight-name">Насть</span>! 👋<br>
+            Вітаю з днем народження! 🥳<br>
+            Цей квіз готувався спеціально для тебе, в ньому є деякі приколи у варіантах відповіді, але якщо пройдеш квіз отримаєш сюрприз, а який? Я й сам не знаю😅<br>
+            Увімкни трек Дімки Nikow нижче, щоб почати проходити цей квіз ✨
+        </h1>
+
+        <!-- Контейнер для зображення питання -->
+        <div id="questionImage" class="question-image hidden">
+            <img id="quizImage" src="" alt="Зображення до питання">
+        </div>
+
+        <div class="btn-box" id="startBlock">
+            <div class="custom-player">
+                <div class="disc" id="disc"></div>
+                <div class="track-info">Nikow — як я цьому посприяв 🎵</div>
+                <button class="btn btn-play" id="playBtn" onclick="toggleMusic()">▶️ Слухати</button>
+            </div>
+            <button class="btn btn-quiz" id="quizBtn" onclick="allowedQuiz()">➡️ Почати квіз</button>
+        </div>
+
+        <div class="grid-box hidden" id="optionsBlock">
+            <button class="btn btn-option" onclick="checkAnswer(0)">Варіант 1</button>
+            <button class="btn btn-option" onclick="checkAnswer(1)">Варіант 2</button>
+            <button class="btn btn-option" onclick="checkAnswer(2)">Варіант 3</button>
+            <button class="btn btn-option" onclick="checkAnswer(3)">Варіант 4</button>
+        </div>
+    </div>
+
+    <script>
+        // ---------- Музика ----------
+        let musicPlaying = false;
+        let currentQuestion = 0;
+
+        const audio = new Audio();
+        audio.src = "music/nikow.mp3";
+        audio.loop = true;
+
+        const playBtn = document.getElementById('playBtn');
+        const quizBtn = document.getElementById('quizBtn');
+        const disc = document.getElementById('disc');
+
+        audio.addEventListener('error', function(e) {
+            console.error("Помилка аудіо:", e);
+            let errorMsg = "Невідома помилка";
+            if (audio.error) {
+                switch (audio.error.code) {
+                    case 1: errorMsg = "Відтворення скасовано"; break;
+                    case 2: errorMsg = "Мережева помилка (файл не знайдено або недоступний)"; break;
+                    case 3: errorMsg = "Помилка декодування (непідтримуваний формат або пошкоджений файл)"; break;
+                    case 4: errorMsg = "Формат не підтримується браузером"; break;
+                    default: errorMsg = "Код помилки: " + audio.error.code;
+                }
+            }
+            alert("Не вдалося завантажити музику. Деталі: " + errorMsg + "\nПереконайтеся, що файл music/nikow.mp3 існує та доступний.");
+            if (musicPlaying) {
+                musicPlaying = false;
+                playBtn.innerHTML = "▶️ Слухати";
+                disc.classList.remove('rotate');
+                quizBtn.classList.remove('active');
+            }
+        });
+
+        function toggleMusic() {
+            if (musicPlaying) {
+                audio.pause();
+                musicPlaying = false;
+                playBtn.innerHTML = "▶️ Слухати";
+                disc.classList.remove('rotate');
+                return;
+            }
+
+            audio.play()
+                .then(() => {
+                    musicPlaying = true;
+                    playBtn.innerHTML = "⏸️ Пауза";
+                    disc.classList.add('rotate');
+                    quizBtn.classList.add('active');
+                })
+                .catch((err) => {
+                    console.error("Помилка play():", err);
+                    alert("Не вдалося відтворити аудіо. Можливо, браузер блокує автозапуск, або файл недоступний. Спробуйте ще раз.");
+                    musicPlaying = false;
+                    playBtn.innerHTML = "▶️ Слухати";
+                    disc.classList.remove('rotate');
+                });
+        }
+
+        // ---------- Квіз ----------
+        function allowedQuiz() {
+            if (quizBtn.classList.contains('active')) {
+                document.getElementById('startBlock').classList.add('hidden');
+                document.getElementById('quizProgress').classList.remove('hidden');
+                document.getElementById('optionsBlock').classList.remove('hidden');
+                loadQuestion();
+            } else {
+                alert("Спершу увімкни трек для святкової атмосфери! 😉");
+            }
+        }
+
+        function loadQuestion() {
+            const data = quizData[currentQuestion];
+            document.getElementById('quizProgress').innerText = `Питання ${currentQuestion + 1} з ${quizData.length}`;
+            document.getElementById('mainTitle').innerText = data.question;
+            
+            // Робота з зображенням
+            const imageContainer = document.getElementById('questionImage');
+            const quizImage = document.getElementById('quizImage');
+            
+            if (data.image && data.image.trim() !== '') {
+                quizImage.src = data.image;
+                imageContainer.classList.remove('hidden');
+            } else {
+                imageContainer.classList.add('hidden');
+            }
+            
+            const buttons = document.querySelectorAll('.grid-box .btn-option');
+            buttons.forEach((btn, index) => {
+                btn.innerText = data.options[index];
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const data = quizData[currentQuestion];
+            
+            if (selectedIndex === data.correct) {
+                alert("Правильно! 🎉");
+                currentQuestion++;
+                
+                if (currentQuestion < quizData.length) {
+                    loadQuestion();
+                } else {
+                    document.getElementById('quizProgress').classList.add('hidden');
+                    document.getElementById('optionsBlock').classList.add('hidden');
+                    document.getElementById('questionImage').classList.add('hidden');
+                    
+                    document.getElementById('mainTitle').innerHTML = `
+                        <span class="highlight-name">КВІЗ ПОВНІСТЮ ПРОЙДЕНО! 🎉</span><br><br>
+                        Ти впоралася на всі 100%! 🥳<br>
+                        А тепер тримай свій заслужений подарунок... 🎁<br><br>
+                        <a href="index2.html" class="gift-link" target="_blank">Отримати подарунок</a>
+                    `;
+                }
+            } else {
+                alert("Ой, не вгадала! Спробуй ще раз! 😜");
+            }
+        }
+
+        // ---------- Дані квізу ----------
+        const quizData = [
+            {
+                question: "Я тобі подобаюсь як друг?",
+                options: [
+                    "Так",
+                    "Ні",
+                    "Я з тобою спілкуюсь тільки заради того щоб ти допомагав з інформатикою",
+                    "Ти хто бляха такий?"
+                ],
+                correct: 0
+            },
+            {
+                question: "Скільки років ми дружимо?",
+                image: "images/vladuska.jpg",
+                options: ["Ти хто?", "З вчорашнього дня", "8-9 років", "67"],
+                correct: 2
+            },
+            {
+                question: "Скільки тобі років?",
+                image: "",
+                options: ["67", "6-7", "15 років (вже доросла)", "У дівчат таке не гарно питати"],
+                correct: 2
+            },
+            {
+                question: "Як ти гадаєш, хто я для тебе?",
+                options: ["Просто знайомий", "Кращий друг", "Найкращий друг Владуська! ❤️", "Хтось дивний"],
+                correct: 2
+            },
+            {
+                question: "Ти для мене як...",
+                image: "",
+                options: ["Настя", "Подруга", "Найкраща подруга, яка може вислухати і допомогти", "Та хто може і дати якщо буду багато собі дозволяти говорити 😡"],
+                correct: 2
+            },
+            {
+                question: "Як я тебе частіше називаю?",
+                options: ["Настя", "Подруга", "Настікс", "Ніяк, ти сама приходиш"],
+                correct: 2
+            },
+            {
+                question: "Яка найкраща команда з черлідінгу у Ліцеї? (Правильна відповідь 3)",
+                options: ["Vitality", "11 група", "VITALITY"],
+                correct: 2
+            }
+        ];
+    </script>
+</body>
+</html>
